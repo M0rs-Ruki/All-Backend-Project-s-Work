@@ -1,0 +1,38 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  font-size: 62.5%; /* 1rem = 10px for easier calculations */
+  scroll-behavior: smooth; /* Enable smooth scrolling */
+}
+
+body {
+  min-height: 100vh; /* Use viewport units for full height */
+  min-height: 100dvh; /* Accounts for mobile browser UI changes */
+  width: 100%;
+  line-height: 1.5;
+  font-family: system-ui, -apple-system, sans-serif; /* Modern font stack */
+  -webkit-font-smoothing: antialiased; /* Better font rendering */
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Optional improvements */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%; /* Responsive media */
+}
+
+input, button, textarea, select {
+  font: inherit; /* Consistent form element styling */
+}
+
+/* Accessibility focus styles */
+:focus-visible {
+  outline: 2px solid blue;
+  outline-offset: 2px;
+}
