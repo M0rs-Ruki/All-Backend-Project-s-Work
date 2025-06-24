@@ -73,6 +73,8 @@ app.get('/profile', isLoggedin, async (req, res) => {
   const user = await User.findOne({email: req.user.email}).populate('posts')
   res.render('profile', {user: user});
 })
+
+//post
 app.post('/post', isLoggedin, async (req, res) => {
   const user = await User.findOne({email: req.user.email})
   const post = await Post.create({
@@ -84,6 +86,35 @@ app.post('/post', isLoggedin, async (req, res) => {
   res.redirect('/profile')
 })
 
+//like
+app.get('/like/:id', isLoggedin, async (req, res) => {
+  const post = await Post.findById(req.params.id).populate('user');
+  const userId = req.user.userid;
+  const likeIndex = post.likes.indexOf(userId);
+  if (likeIndex === -1) {
+    // If user hasn't liked it yet, add their ID
+    post.likes.push(userId);
+  } else {
+    // If user already liked it, remove their ID
+    post.likes.splice(likeIndex, 1);
+  }
+  await post.save();
+  res.redirect('/profile');
+});
+
+// Edit
+app.get('/edit/:id', isLoggedin, async (req, res) => {
+  const post = await Post.findById(req.params.id).populate('user');
+  res.render('edit', {post: post});
+});
+
+// Update
+app.post('/update/:id', isLoggedin, async (req, res) => {
+  const post = await Post.findByIdAndUpdate({_id: req.params.id}, {
+    content: req.body.content
+  })
+  res.redirect('/profile');
+})
 function isLoggedin(req, res, next) {
   if (req.cookies.token === undefined) {
     res.redirect('/login');
@@ -93,8 +124,6 @@ function isLoggedin(req, res, next) {
     next();
   }
 }
-
-
 
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
