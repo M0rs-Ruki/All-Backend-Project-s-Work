@@ -4,29 +4,43 @@ import Post from "./models/post.model.js";
 import cookieParser from "cookie-parser";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import multer from "multer";
+import upload from "./utils/multer.utils.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { log } from "console";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const app = express()
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
 
-const upload = mult
 
 app.get('/', (req, res) => {
     res.render('index');
 })
 
-app.get('/test', (req, res) => {
-    res.render('test');
-})
-app.post('/upload', (req, res) => {
-  console.log(req.file);
+app.get('/profile/upload',isLoggedin,async (req, res) => {
+  const user = await User.findOne({email: req.user.email})
+    res.render('profileUpload', {user: user});
 })
 
+app.post('/upload',isLoggedin, upload.single('image'), async (req, res) => {
+  const user = await User.findOne({email: req.user.email})
+  // console.log(req.file.filename);
+  // log(req.file)
+  user.profilePic = req.file.filename;
+  await user.save();
+  // log(user)
+  res.redirect('/profile');
+})
 
 // Registring
 app.post('/register', async (req, res) => {
@@ -125,6 +139,8 @@ app.post('/update/:id', isLoggedin, async (req, res) => {
   })
   res.redirect('/profile');
 })
+
+
 function isLoggedin(req, res, next) {
   if (req.cookies.token === undefined) {
     res.redirect('/login');
