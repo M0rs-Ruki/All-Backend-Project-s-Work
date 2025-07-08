@@ -4,6 +4,7 @@ import Post from "./models/post.model.js";
 import cookieParser from "cookie-parser";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 
 const app = express()
 
@@ -13,10 +14,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+const upload = mult
 
 app.get('/', (req, res) => {
     res.render('index');
 })
+
+app.get('/test', (req, res) => {
+    res.render('test');
+})
+app.post('/upload', (req, res) => {
+  console.log(req.file);
+})
+
 
 // Registring
 app.post('/register', async (req, res) => {
